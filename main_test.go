@@ -1,6 +1,7 @@
 package main
 
 import (
+	"number-guessing-game/app"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -9,44 +10,44 @@ import (
 func TestMain(t *testing.T) {
 	asserts := assert.New(t)
 
-	t.Run("Game should be created with chosen difficulty level", func(t *testing.T) {
+	t.Run("app.Game should be created with chosen difficulty level", func(t *testing.T) {
 
 		tests := []struct {
 			name       string
 			difficulty string
-			expected   *Game
+			expected   *app.Game
 		}{
-			{"Game should be created with difficulty level easy", "easy", &Game{Chances: 10, Difficulty: "easy"}},
-			{"Game should be created with default difficulty level medium", "medium", &Game{Chances: 5, Difficulty: "medium"}},
-			{"Game should be created with default difficulty level hard", "hard", &Game{Chances: 3, Difficulty: "hard"}},
+			{"app.Game should be created with difficulty level easy", "easy", &app.Game{Chances: 10, Difficulty: "easy"}},
+			{"app.Game should be created with default difficulty level medium", "medium", &app.Game{Chances: 5, Difficulty: "medium"}},
+			{"app.Game should be created with default difficulty level hard", "hard", &app.Game{Chances: 3, Difficulty: "hard"}},
 		}
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
-				game := NewGame(tt.difficulty)
+				game := app.NewGame(tt.difficulty)
 				asserts.Equal(tt.expected.Difficulty, game.Difficulty)
 				asserts.Equal(tt.expected.Chances, game.Chances)
 			})
 		}
 	})
 
-	t.Run("Game should won when guessing the right number withing the number of chances", func(t *testing.T) {
+	t.Run("app.Game should won when guessing the right number withing the number of chances", func(t *testing.T) {
 
-		game := NewGame("easy")
+		game := app.NewGame("easy")
 		game.Number = 50
 		game.Guess(50)
 		asserts.Equal(1, game.Attempts)
 		asserts.Equal(50, game.GuessNumber)
-		asserts.True(game.IsWon())
+		asserts.True(game.HasWon())
 	})
 
-	t.Run("Game should not won when guessing the wrong number withing the number of chances", func(t *testing.T) {
+	t.Run("app.Game should not won when guessing the wrong number withing the number of chances", func(t *testing.T) {
 
-		game := NewGame("easy")
+		game := app.NewGame("easy")
 		game.Number = 50
 		for game.HasChances() {
 			game.Guess(25)
 		}
 		asserts.Equal(10, game.Attempts)
-		asserts.False(game.IsWon())
+		asserts.False(game.HasWon())
 	})
 }
