@@ -54,4 +54,22 @@ func (g *Game) Start() {
 	fmt.Println("Welcome to the Number Guessing Game!")
 	fmt.Println("I'm thinking of a number between 1 and 100.")
 	fmt.Println("You have", g.Chances, "chances to guess the correct number.")
+
+	fmt.Println("Let's start the game!")
+
+	fmt.Println("Enter your guess: ")
+	var guess int
+	for g.HasChances() {
+		fmt.Scan(&guess)
+		g.Guess(guess)
+		if g.HasWon() {
+			fmt.Println("Congratulations! You guessed the correct number in", g.Attempts, "attempts.")
+			break
+		}
+	}
+
+	if !g.HasWon() {
+		fmt.Println("Sorry, you ran out of chances. The correct number was", g.Number)
+	}
+	fmt.Println("Thanks for playing!")
 }

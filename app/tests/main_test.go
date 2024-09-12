@@ -5,6 +5,7 @@ import (
 	"io"
 	"number-guessing-game/app"
 	"os"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -58,7 +59,76 @@ func TestMain(t *testing.T) {
 		game := app.NewGame("easy")
 
 		output := outputToString(game.Start)
-		asserts.Equal("Welcome to the Number Guessing Game!\nI'm thinking of a number between 1 and 100.\nYou have 10 chances to guess the correct number.\n", output)
+		asserts.Contains(output, "Welcome to the Number Guessing Game!\nI'm thinking of a number between 1 and 100.\nYou have 10 chances to guess the correct number.\n")
+	})
+
+	t.Run("should be able to input a guess number", func(t *testing.T) {
+		game := app.NewGame("easy")
+
+		// Backup the original stdin
+		oldStdin := os.Stdin
+
+		// Restore stdin after test
+		defer func() { os.Stdin = oldStdin }()
+
+		// Create a pipe to simulate stdin
+		r, w, _ := os.Pipe()
+
+		// Set the pipe reader as stdin
+		os.Stdin = r
+
+		// Write input to the pipe writer
+		input := "50"
+		w.WriteString(input)
+		w.Close() // Close the writer to simulate end of input
+
+		expectedInput, _ := strconv.Atoi(input)
+
+		// Call the function or code that reads from stdin
+		output := outputToString(game.Start)
+
+		asserts.Contains(output, "Enter your guess: ")
+		asserts.Equal(expectedInput, game.GuessNumber)
+	})
+
+	t.Run("should greet the user when the game is won", func(t *testing.T) {
+
+		game := app.NewGame("easy")
+		game.Number = 50
+
+		// Backup the original stdin
+		oldStdin := os.Stdin
+
+		// Restore stdin after test
+		defer func() { os.Stdin = oldStdin }()
+
+		// Create a pipe to simulate stdin
+		r, w, _ := os.Pipe()
+
+		// Set the pipe reader as stdin
+		os.Stdin = r
+
+		// Write input to the pipe writer
+		input := "50"
+		w.WriteString(input)
+		w.Close() // Close the writer to simulate end of input
+
+		output := outputToString(game.Start)
+
+		asserts.True(game.HasWon())
+		asserts.Contains(output, "Congratulations! You guessed the correct number in 1 attempts.")
+		asserts.Equal(50, game.GuessNumber)
+	})
+
+	t.Run("should greet the user when the game is lost", func(t *testing.T) {
+		game := app.NewGame("easy")
+		game.Number = 50
+		for game.HasChances() {
+			game.Guess(25)
+		}
+		asserts.Equal(10, game.Attempts)
+		asserts.False(game.HasWon())
+		asserts.Contains(outputToString(game.Start), "Sorry, you ran out of chances. The correct number was 50")
 	})
 }
 
