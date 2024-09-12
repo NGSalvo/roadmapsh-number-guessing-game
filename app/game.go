@@ -1,6 +1,9 @@
 package app
 
-import "math/rand/v2"
+import (
+	"fmt"
+	"math/rand/v2"
+)
 
 type Game struct {
 	Chances     int
@@ -45,4 +48,10 @@ func (g *Game) HasChances() bool {
 
 func (g *Game) HasWon() bool {
 	return g.Number == g.GuessNumber
+}
+
+func (g *Game) Start() {
+	fmt.Println("Welcome to the Number Guessing Game!")
+	fmt.Println("I'm thinking of a number between 1 and 100.")
+	fmt.Println("You have", g.Chances, "chances to guess the correct number.")
 }
