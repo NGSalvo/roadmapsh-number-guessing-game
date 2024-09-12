@@ -9,7 +9,7 @@ import (
 func TestMain(t *testing.T) {
 	asserts := assert.New(t)
 
-	t.Run("Game should be created with default difficulty level", func(t *testing.T) {
+	t.Run("Game should be created with chosen difficulty level", func(t *testing.T) {
 
 		tests := []struct {
 			name       string
