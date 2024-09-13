@@ -87,6 +87,12 @@ func (g *Game) Start() {
 			fmt.Println("Congratulations! You guessed the correct number in", g.Attempts, "attempts.")
 			break
 		}
+
+		if guess > g.Number {
+			fmt.Println("Incorrect! The number is less than", guess)
+		} else if guess < g.Number {
+			fmt.Println("Incorrect! The number is greater than", guess)
+		}
 	}
 
 	if !g.HasWon() {
