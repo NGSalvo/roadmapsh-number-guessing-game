@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"math/rand/v2"
+	"strings"
 )
 
 type Game struct {
@@ -11,6 +12,7 @@ type Game struct {
 	Number      int
 	GuessNumber int
 	Attempts    int
+	Repeat      bool
 }
 
 const (
@@ -49,6 +51,31 @@ func (g *Game) HasChances() bool {
 
 func (g *Game) HasWon() bool {
 	return g.Number == g.GuessNumber
+}
+
+func (g *Game) reset() {
+	g.Attempts = 0
+}
+
+func (g *Game) PlayAgain() bool {
+	fmt.Println("Do you want to play again? (y/n)")
+
+	var playAgain string
+	fmt.Scan(&playAgain)
+
+	for !strings.EqualFold(playAgain, "y") && !strings.EqualFold(playAgain, "n") {
+		fmt.Println("Invalid input. Please enter y or n.")
+		fmt.Scan(&playAgain)
+	}
+
+	if strings.EqualFold(playAgain, "n") {
+		g.Repeat = false
+		return false
+	}
+
+	g.reset()
+	g.Repeat = true
+	return true
 }
 
 func (g *Game) Start() {
@@ -98,5 +125,10 @@ func (g *Game) Start() {
 	if !g.HasWon() {
 		fmt.Println("Sorry, you ran out of chances. The correct number was", g.Number)
 	}
-	fmt.Println("Thanks for playing!")
+
+	playAgain := g.PlayAgain()
+
+	if !playAgain {
+		fmt.Println("Thanks for playing!")
+	}
 }

@@ -9,4 +9,8 @@ func main() {
 	game := app.NewGame()
 
 	game.Start()
+
+	for game.Repeat {
+		game.Start()
+	}
 }
