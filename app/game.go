@@ -7,19 +7,20 @@ import (
 
 type Game struct {
 	Chances     int
-	Difficulty  string
+	Difficulty  int
 	Number      int
 	GuessNumber int
 	Attempts    int
 }
 
-func NewGame(difficulty string) *Game {
-	game := Game{
-		Difficulty: difficulty,
-	}
-	game.setAttemps()
-	game.Number = game.getRandomNumber()
-	return &game
+const (
+	Easy = iota + 1
+	Medium
+	Hard
+)
+
+func NewGame() *Game {
+	return &Game{}
 }
 
 func (g *Game) getRandomNumber() int {
@@ -28,11 +29,11 @@ func (g *Game) getRandomNumber() int {
 
 func (g *Game) setAttemps() {
 	switch g.Difficulty {
-	case "easy":
+	case Easy:
 		g.Chances = 10
-	case "medium":
+	case Medium:
 		g.Chances = 5
-	case "hard":
+	case Hard:
 		g.Chances = 3
 	}
 }
@@ -53,7 +54,27 @@ func (g *Game) HasWon() bool {
 func (g *Game) Start() {
 	fmt.Println("Welcome to the Number Guessing Game!")
 	fmt.Println("I'm thinking of a number between 1 and 100.")
+
+	var difficulty int
+
+	fmt.Println("Choose a difficulty level:")
+	fmt.Println("1. Easy (10 chances)")
+	fmt.Println("2. Medium (5 chances)")
+	fmt.Println("3. Hard (3 chances)")
+
+	fmt.Scan(&difficulty)
+
+	for difficulty < 1 || difficulty > 3 {
+		fmt.Println("Invalid difficulty level. Please enter a number between 1 and 3 to select a difficulty level.")
+		fmt.Println("Choose a difficulty level:")
+		fmt.Scan(&difficulty)
+	}
+	g.Difficulty = difficulty
+	g.setAttemps()
+
 	fmt.Println("You have", g.Chances, "chances to guess the correct number.")
+
+	g.Number = g.getRandomNumber()
 
 	fmt.Println("Let's start the game!")
 
