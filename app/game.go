@@ -78,26 +78,19 @@ func (g *Game) PlayAgain() bool {
 	return true
 }
 
-func (g *Game) Start() {
-	fmt.Println("Welcome to the Number Guessing Game!")
-	fmt.Println("I'm thinking of a number between 1 and 100.")
-
-	var difficulty int
+func (g *Game) difficultyMenu() {
 
 	fmt.Println("Choose a difficulty level:")
 	fmt.Println("1. Easy (10 chances)")
 	fmt.Println("2. Medium (5 chances)")
 	fmt.Println("3. Hard (3 chances)")
+}
 
-	fmt.Scan(&difficulty)
+func (g *Game) Start() {
+	fmt.Println("Welcome to the Number Guessing Game!")
+	fmt.Println("I'm thinking of a number between 1 and 100.")
 
-	for difficulty < 1 || difficulty > 3 {
-		fmt.Println("Invalid difficulty level. Please enter a number between 1 and 3 to select a difficulty level.")
-		fmt.Println("Choose a difficulty level:")
-		fmt.Scan(&difficulty)
-	}
-	g.Difficulty = difficulty
-	g.setAttemps()
+	g.setDifficulty()
 
 	fmt.Println("You have", g.Chances, "chances to guess the correct number.")
 
@@ -115,20 +108,38 @@ func (g *Game) Start() {
 			break
 		}
 
-		if guess > g.Number {
-			fmt.Println("Incorrect! The number is less than", guess)
-		} else if guess < g.Number {
-			fmt.Println("Incorrect! The number is greater than", guess)
-		}
+		g.showHint(guess)
 	}
 
 	if !g.HasWon() {
 		fmt.Println("Sorry, you ran out of chances. The correct number was", g.Number)
 	}
 
-	playAgain := g.PlayAgain()
-
-	if !playAgain {
+	if !g.PlayAgain() {
 		fmt.Println("Thanks for playing!")
 	}
+}
+
+func (g *Game) showHint(guess int) {
+	if guess > g.Number {
+		fmt.Println("Incorrect! The number is less than", guess)
+	} else if guess < g.Number {
+		fmt.Println("Incorrect! The number is greater than", guess)
+	}
+}
+
+func (g *Game) setDifficulty() {
+	var difficulty int
+
+	g.difficultyMenu()
+
+	fmt.Scan(&difficulty)
+
+	for difficulty < 1 || difficulty > 3 {
+		fmt.Println("Invalid difficulty level. Please enter a number between 1 and 3 to select a difficulty level.")
+		fmt.Println("Choose a difficulty level:")
+		fmt.Scan(&difficulty)
+	}
+	g.Difficulty = difficulty
+	g.setAttemps()
 }
